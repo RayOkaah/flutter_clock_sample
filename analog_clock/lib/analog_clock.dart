@@ -10,8 +10,8 @@ import 'package:flutter/semantics.dart';
 import 'package:intl/intl.dart';
 import 'package:vector_math/vector_math_64.dart' show radians;
 
-import 'container_hand.dart';
 import 'drawn_hand.dart';
+import 'clock_dial.dart';
 
 /// Total distance traveled by a second or a minute hand, each second or minute,
 /// respectively.
@@ -102,13 +102,13 @@ class _AnalogClockState extends State<AnalogClock> {
             // Minute hand.
             highlightColor: Color(0xFF8AB4F8),
             // Second hand.
-            accentColor: Color(0xFF669DF6),
+      accentColor: Colors.red,
             backgroundColor: Color(0xFFD2E3FC),
           )
         : Theme.of(context).copyWith(
             primaryColor: Color(0xFFD2E3FC),
             highlightColor: Color(0xFF4285F4),
-            accentColor: Color(0xFF8AB4F8),
+      accentColor: Colors.red,
             backgroundColor: Color(0xFF3C4043),
           );
 
@@ -132,39 +132,62 @@ class _AnalogClockState extends State<AnalogClock> {
         value: time,
       ),
       child: Container(
-        color: customTheme.backgroundColor,
+        //color: customTheme.backgroundColor,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black,
+        ),
         child: Stack(
           children: [
-            // Example of a hand drawn with [CustomPainter].
+            // Example of a hand drawn with [Container].
             DrawnHand(
-              color: customTheme.accentColor,
-              thickness: 4,
-              size: 1,
-              angleRadians: _now.second * radiansPerTick,
+              color: customTheme.primaryColor,
+              thickness: 5,
+              size: 0.4,
+              angleRadians: _now.hour * radiansPerHour +
+                  (_now.minute / 60) * radiansPerHour,
             ),
+            // Example of a hand drawn with [CustomPainter].
+            //Minute Hand
             DrawnHand(
               color: customTheme.highlightColor,
               thickness: 16,
-              size: 0.9,
+              size: 0.5,
               angleRadians: _now.minute * radiansPerTick,
             ),
-            // Example of a hand drawn with [Container].
-            ContainerHand(
-              color: Colors.transparent,
-              size: 0.5,
-              angleRadians: _now.hour * radiansPerHour +
-                  (_now.minute / 60) * radiansPerHour,
-              child: Transform.translate(
-                offset: Offset(0.0, -60.0),
-                child: Container(
-                  width: 32,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: customTheme.primaryColor,
-                  ),
-                ),
+            //Second hand
+            DrawnHand(
+              color: customTheme.accentColor,
+              thickness: 4,
+              size: 0.8,
+              angleRadians: _now.second * radiansPerTick,
+            ),
+
+            Center(
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: customTheme.backgroundColor,
+                ),),
+            ),
+
+            new Container(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
+              padding: const EdgeInsets.all(10.0),
+              child: new CustomPaint(
+                painter: new ClockDialPainter(),
               ),
             ),
+            //Weather Info
             Positioned(
               left: 0,
               bottom: 0,
